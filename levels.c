@@ -1,5 +1,5 @@
 #include "header.h"
-#include "breakout.h"
+#include "Brikz.h"
 
 void loadLevel1(){
 

@@ -145,14 +145,15 @@ void startNewRound(){
 
 	speedAmplifier = 0.20;
 	int randInt = rand();
+	float randFloat = (float)rand()/(float)(RAND_MAX/10) + 11;
 	//ball.XSpeed = (rand()%20 + 1);
 	//ball.YSpeed = BALL_INITIAL_SPEED_Y*speedAmplifier;
-	ball.YSpeed = -sqrt(-( (randInt%10+11)*(randInt%10+11) )+BALL_SPEED_CONSTANT)*speedAmplifier;
+	ball.YSpeed = -sqrtf(-( randFloat*randFloat )+BALL_SPEED_CONSTANT);
     if(rand()%20+1 < 11){
-		ball.XSpeed = -(randInt%10+11)*speedAmplifier;
+		ball.XSpeed = -randFloat;
     }
     else{
-		ball.XSpeed = (randInt%10+11)*speedAmplifier;
+		ball.XSpeed = randFloat;
     }
 
 	//Reset speed amplifier
@@ -199,10 +200,20 @@ void updateLogic(){
 			ball.YSpeed = 0 - SDL_abs(ball.YSpeed);
 
 			if(BreakoutBall1RectDest.x >= paddleDest.x+paddleDest.w-40){
+				int Movement = ball.XSpeed*ball.XSpeed + ball.YSpeed*ball.YSpeed;
 				ball.XSpeed += 3;
+				while(-(ball.XSpeed*ball.XSpeed)+Movement < 0){
+					ball.XSpeed -=0.1;
+				}
+				ball.YSpeed = -sqrtf( -(ball.XSpeed*ball.XSpeed)+Movement );
 			}
 			if(BreakoutBall1RectDest.x+BALL_WIDTH <= paddleDest.x+40){
+				int Movement = ball.XSpeed*ball.XSpeed + ball.YSpeed*ball.YSpeed;
 				ball.XSpeed -= 3;
+				while(-(ball.XSpeed*ball.XSpeed)+Movement < 0){
+					ball.XSpeed +=0.1;
+				}
+				ball.YSpeed = -sqrtf( -(ball.XSpeed*ball.XSpeed)+Movement );
 			}
 		}
 		else if(ball.y >= paddleDest.y){
@@ -221,8 +232,8 @@ void updateLogic(){
 		ball.YSpeed = 0 + SDL_abs(ball.YSpeed);
 	}
 
-	ball.x = ball.x + ball.XSpeed;
-	ball.y = ball.y + ball.YSpeed;
+	ball.x += ball.XSpeed*speedAmplifier;
+	ball.y += ball.YSpeed*speedAmplifier;
 
 	BreakoutBall2RectDest = BreakoutBall1RectDest;
 
@@ -246,29 +257,29 @@ void updateBrickLogic(){
 
 		if(SDL_IntersectRect(&BreakoutBall1RectDest, &rightRect, &intersectionRect)){
 			printf("ball is right of brick \n");
-			ball.XSpeed = 0+SDL_abs(ball.XSpeed);
+			ball.XSpeed = 0+fabs(ball.XSpeed);
 			hit = true;
 		}
 		else if(SDL_IntersectRect(&BreakoutBall1RectDest, &leftRect, &intersectionRect)){
 			printf("ball is left of brick \n");
-			ball.XSpeed = 0-SDL_abs(ball.XSpeed);
+			ball.XSpeed = 0-fabs(ball.XSpeed);
 			hit = true;
 		}
 		else if(SDL_IntersectRect(&BreakoutBall1RectDest, &aboveRect, &intersectionRect)){
 			printf("ball is above brick \n");
-			ball.YSpeed = 0-SDL_abs(ball.YSpeed);
+			ball.YSpeed = 0-fabs(ball.YSpeed);
 			hit = true;
 		}
 		else if(SDL_IntersectRect(&BreakoutBall1RectDest, &belowRect, &intersectionRect)){
 			printf("ball is below brick \n");
-			ball.YSpeed = 0+SDL_abs(ball.YSpeed);
+			ball.YSpeed = 0+fabs(ball.YSpeed);
 			hit = true;
 		}
 
 		SDL_Rect brickRect = {bricks[i].x, bricks[i].y, BRICK_WIDTH, BRICK_HEIGHT};
 		if(SDL_IntersectRect(&brickRect, &BreakoutBall1RectDest, &intersectionRect)){
 			//TODO: determine side of collision.
-			hit = true;
+			//hit = true;
 		}
 
 		if(hit){
@@ -276,14 +287,10 @@ void updateBrickLogic(){
 			if(bricks[i].damage == 0){
 				bricksLeft--;
 			}
-			ball.XSpeed = ball.XSpeed/speedAmplifier;
-			ball.YSpeed = ball.YSpeed/speedAmplifier;
-			speedAmplifier += 0.02;
-			ball.XSpeed = ball.XSpeed*speedAmplifier;
-			ball.YSpeed = ball.YSpeed*speedAmplifier;
+			speedAmplifier += 0.01;
 
-            ball.x += ball.XSpeed;
-            ball.y += ball.YSpeed;
+            ball.x += ball.XSpeed*speedAmplifier;
+            ball.y += ball.YSpeed*speedAmplifier;
 		}
 
 
@@ -295,10 +302,6 @@ void wait(int WaitTicks){
     waitedTicks = 0;
     waiting = true;
     waitTicks = WaitTicks;
-}
-
-void displayDebugInfo(){
-
 }
 
 void renderBricks(){
@@ -369,7 +372,7 @@ void doRendering(){
 		SDL_FreeSurface(textSurface);
 		textSurface = NULL;
 
-		sprintf(textToRender, "Speed amplifier: %f    Tickrate: %f",speedAmplifier, tickrate);
+		sprintf(textToRender, "Speed amplifier: %f  XSpeed: %f  YSpeed: %f  Tickrate: %f",speedAmplifier, ball.XSpeed, ball.YSpeed, tickrate);
 
 		textSurface = TTF_RenderText_Solid(font, textToRender, (SDL_Color){0,0,0} );
 
@@ -462,19 +465,11 @@ int startBreakoutGame(){
 						motionBlur = !motionBlur;
 					}
 					else if(e.key.keysym.sym == SDLK_EQUALS){
-						ball.XSpeed = ball.XSpeed/speedAmplifier;
-						ball.YSpeed = ball.YSpeed/speedAmplifier;
+
 						speedAmplifier = speedAmplifier + 0.05;
-						ball.XSpeed = ball.XSpeed*speedAmplifier;
-						ball.YSpeed = ball.YSpeed*speedAmplifier;
 					}
 					else if(e.key.keysym.sym == SDLK_MINUS){
-						ball.XSpeed = ball.XSpeed/speedAmplifier;
-						ball.YSpeed = ball.YSpeed/speedAmplifier;
 						speedAmplifier = speedAmplifier - 0.05;
-
-						ball.XSpeed = ball.XSpeed*speedAmplifier;
-						ball.YSpeed = ball.YSpeed*speedAmplifier;
 					}
 
 				}

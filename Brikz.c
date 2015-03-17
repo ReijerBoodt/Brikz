@@ -36,9 +36,9 @@ bool loadBreakoutGame(){
 
 	KeyBoardState = SDL_GetKeyboardState(NULL);
 
-	breakout_image = IMG_Load(PONG_IMAGE);
+	breakout_image = IMG_Load(BRIKZ_IMAGE);
     if(breakout_image == NULL){
-        printf( "Unable to load image %s! IMG Error: %s\n", PONG_IMAGE, IMG_GetError() );
+        printf( "Unable to load image %s! IMG Error: %s\n", BRIKZ_IMAGE, IMG_GetError() );
         success = false;
         return success;
     }

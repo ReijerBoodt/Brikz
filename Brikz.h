@@ -1,4 +1,4 @@
-#define PONG_IMAGE "BrikzSprites.png"
+#define BRIKZ_IMAGE "BrikzSprites.png"
 #define PADDLE_STEP 10
 #define BALL_INITIAL_SPEED_X 20
 #define BALL_INITIAL_SPEED_Y 10

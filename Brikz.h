@@ -40,6 +40,7 @@ void renderBricks();
 void doRendering();
 
 void loadLevel1();
+void loadLevelGeneric();
 
 
 SDL_Rect BreakoutPaddleRectSauce; // 0, 0 -> 27, 223

@@ -130,7 +130,7 @@ int main( int argc, char* args[] )
 				startBreakoutGame();
 				break;
 			case 2:
-
+                startLevelMaker();
 				break;
 		}
 	}

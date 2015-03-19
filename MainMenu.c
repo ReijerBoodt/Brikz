@@ -88,6 +88,10 @@ int OpenMainMenu(){
                 if(e.key.keysym.sym == SDLK_ESCAPE){
                     quitMainMenu = true;
                 }
+                else if(e.key.keysym.sym == SDLK_l){
+                    exitStatus = 2;
+                    quitMainMenu = true;
+                }
             }
             else if(e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT){
                 SDL_Point mousepos = {e.button.x, e.button.y};

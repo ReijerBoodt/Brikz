@@ -62,18 +62,19 @@ void levelMakerUpdateLogic(){
                 continue;
             }
         }
-        if(e.button.button == SDL_BUTTON_LEFT || e.button.button == SDL_BUTTON_RIGHT){
+        if(e.button.button == SDL_BUTTON_LEFT || e.button.button == SDL_BUTTON_RIGHT && e.type != SDL_MOUSEBUTTONUP){
             printf("er is geklikt...\n");
             SDL_Point mousepos = {e.button.x, e.button.y};
-            int i;
-            for(i=0;i<bricksInLevel;i++){
+
+            for(int i=0;i<bricksInLevel;i++){
+                //printf("checked a brick\n");
                 SDL_Rect temprect = {bricks[i].x, bricks[i].y, BRICK_WIDTH, BRICK_HEIGHT};
                 if(SDL_EnclosePoints(&mousepos, 1, &temprect, NULL) && !previouslyChanged[i] ){
-                    if( SDL_BUTTON(SDL_BUTTON_LEFT) && bricks[i].damage>0 ){
+                    if( e.button.button == SDL_BUTTON_LEFT && bricks[i].damage>0 ){
                         bricks[i].damage--;
                         previouslyChanged[i]=true;
                     }
-                    if( SDL_BUTTON(SDL_BUTTON_RIGHT) && bricks[i].damage<2 ){
+                    if( e.button.button == SDL_BUTTON_RIGHT && bricks[i].damage<2 ){
                         bricks[i].damage++;
                         previouslyChanged[i]=true;
                     }
@@ -205,7 +206,7 @@ int startLevelMaker(){
 		if( SDL_GetTicks()-previousFrame < 10 ){
 			render = false;
 		}
-		if( SDL_GetTicks()-previousClear > 2000 ){
+		if( SDL_GetTicks()-previousClear > 200 ){
             free(previouslyChanged);
             previouslyChanged = NULL;
             previouslyChanged = (bool*) calloc(bricksInLevel, sizeof(bool));

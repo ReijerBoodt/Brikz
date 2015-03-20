@@ -51,9 +51,6 @@ void levelMakerUpdateLogic(){
             quit = true;
             quitLevelMaker = true;
         }
-        /*else if(e.type == SDL_MOUSE){
-            printf("hallo");
-        }*/
 
         else if(e.type == SDL_KEYDOWN){
             printf("key pressed: %s \n", SDL_GetKeyName(e.key.keysym.sym) );
@@ -62,8 +59,12 @@ void levelMakerUpdateLogic(){
                 continue;
             }
         }
-        if(e.button.button == SDL_BUTTON_LEFT || e.button.button == SDL_BUTTON_RIGHT && e.type != SDL_MOUSEBUTTONUP){
-            printf("er is geklikt...\n");
+        else if(e.button.button == SDL_BUTTON_LEFT || e.button.button == SDL_BUTTON_RIGHT){
+            if(e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONUP){
+                break;
+            }
+
+            //printf("er is geklikt...\n");
             SDL_Point mousepos = {e.button.x, e.button.y};
 
             for(int i=0;i<bricksInLevel;i++){
@@ -139,7 +140,7 @@ void levelMakerDoRendering(){
 
 		sprintf(textToRender, "Framerate: %f fps", framerate);
 
-		textSurface = TTF_RenderText_Solid(font, textToRender, (SDL_Color){0,0,0} );
+		textSurface = TTF_RenderText_Solid(font, textToRender, (SDL_Color){50,50,255} );
 
 		textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 		SDL_RenderCopy(renderer, textTexture, NULL, &((SDL_Rect){10,10,textSurface->w,textSurface->h}) );
@@ -151,7 +152,7 @@ void levelMakerDoRendering(){
 
 		sprintf(textToRender, "Tickrate: %f",tickrate);
 
-		textSurface = TTF_RenderText_Solid(font, textToRender, (SDL_Color){0,0,0} );
+		textSurface = TTF_RenderText_Solid(font, textToRender, (SDL_Color){255,255,255} );
 
 		textTexture = NULL;
 		textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);

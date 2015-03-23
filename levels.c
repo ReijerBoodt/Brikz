@@ -300,3 +300,48 @@ void loadLevelGeneric(){
 
     bricksLeft = bricksInLevel;
 }
+
+bool loadLevelFromFile(const char *filename){
+    FILE *levelFile = fopen(filename, "rb");
+    if(levelFile == NULL){
+        return false;
+    }
+    int numbricks;
+    fread(numbricks, sizeof(int), 1, levelFile);
+
+    free(bricks);
+    bricks = (Brick*) calloc(numbricks, sizeof(Brick));
+
+    bricksInLevel = fread(bricks, sizeof(Brick), numbricks, levelFile);
+    bricksLeft = bricksInLevel;
+
+    fclose(levelFile);
+    levelFile = NULL;
+    return true;
+}
+
+bool writeLevelToFile(const char *filename){
+    FILE *levelFile = fopen(filename, "w");
+    if(levelFile == NULL){
+        return false;
+    }
+    Brick *bricksBuffer = calloc(bricksInLevel, sizeof(Brick));
+    int newBricksInLevel = 0;
+
+    for(int i=0; i<bricksInLevel; i++){
+        if( !bricks[i].damage == 0 ){
+            bricksBuffer[newBricksInLevel] == bricks[i];
+            newBricksInLevel++;
+        }
+    }
+    fseek(levelFile, 0, SEEK_SET);
+    fwrite(&newBricksInLevel, sizeof(int), 1, levelFile);
+    fseek(levelFile, sizeof(int), SEEK_SET);
+    fwrite(bricksBuffer, szieof(Brick), newBricksInLevel, levelFile);
+
+    free(bricksBuffer);
+    bricksBuffer = NULL;
+    fclose(levelFile);
+    levelFile = NULL;
+    return true;
+}

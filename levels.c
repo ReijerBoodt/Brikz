@@ -330,14 +330,14 @@ bool writeLevelToFile(const char *filename){
 
     for(int i=0; i<bricksInLevel; i++){
         if( !bricks[i].damage == 0 ){
-            bricksBuffer[newBricksInLevel] == bricks[i];
+            bricksBuffer[newBricksInLevel] = bricks[i];
             newBricksInLevel++;
         }
     }
     fseek(levelFile, 0, SEEK_SET);
     fwrite(&newBricksInLevel, sizeof(int), 1, levelFile);
     fseek(levelFile, sizeof(int), SEEK_SET);
-    fwrite(bricksBuffer, szieof(Brick), newBricksInLevel, levelFile);
+    fwrite(bricksBuffer, sizeof(Brick), newBricksInLevel, levelFile);
 
     free(bricksBuffer);
     bricksBuffer = NULL;

@@ -321,7 +321,7 @@ bool loadLevelFromFile(const char *filename){
 }
 
 bool writeLevelToFile(const char *filename){
-    FILE *levelFile = fopen(filename, "w");
+    FILE *levelFile = fopen(filename, "wb");
     if(levelFile == NULL){
         return false;
     }

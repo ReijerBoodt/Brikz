@@ -171,7 +171,7 @@ void startNewRound(){
 
 	BreakoutBall2RectDest = BreakoutBall1RectDest;
 
-	loadLevel1();
+	loadLevel(1);
 
 	//bricksLeft = sizeof(*bricks)/sizeof(Brick);
 	printf("%i bricks left \n", bricksLeft);

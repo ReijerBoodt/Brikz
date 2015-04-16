@@ -1,6 +1,13 @@
 #include "header.h"
 #include "Brikz.h"
 
+#define levelFolder "levels/"
+#define level1File "1.lvl"
+#define level2File "2.lvl"
+#define level3File "3.lvl"
+#define level4File "4.lvl"
+#define levelGenericFile "gen.lvl"
+
 void loadLevel1(){
 
 	bricksInLevel = 256;
@@ -306,12 +313,15 @@ bool loadLevelFromFile(const char *filename){
     if(levelFile == NULL){
         return false;
     }
-    int numbricks;
-    fread(numbricks, sizeof(int), 1, levelFile);
+    int numbricks = 0;
+    fseek(levelFile, 0, SEEK_SET);
+    fread(&numbricks, sizeof(int), 1, levelFile);
+		printf("num of bricks at reading: %i\n",numbricks);
 
     free(bricks);
     bricks = (Brick*) calloc(numbricks, sizeof(Brick));
 
+	fseek(levelFile, sizeof(int), SEEK_SET);
     bricksInLevel = fread(bricks, sizeof(Brick), numbricks, levelFile);
     bricksLeft = bricksInLevel;
 
@@ -334,6 +344,7 @@ bool writeLevelToFile(const char *filename){
             newBricksInLevel++;
         }
     }
+		printf("new num of bricks for writing: %i\n", newBricksInLevel);
     fseek(levelFile, 0, SEEK_SET);
     fwrite(&newBricksInLevel, sizeof(int), 1, levelFile);
     fseek(levelFile, sizeof(int), SEEK_SET);
@@ -344,4 +355,52 @@ bool writeLevelToFile(const char *filename){
     fclose(levelFile);
     levelFile = NULL;
     return true;
+}
+
+bool loadLevel(int lvl){
+	bool returnvalue = true;
+	switch(lvl){
+	case 1:
+		returnvalue = loadLevelFromFile(levelFolder level1File);
+		break;
+	case 2:
+		returnvalue = loadLevelFromFile(levelFolder level2File);
+		break;
+	case 3:
+		returnvalue = loadLevelFromFile(levelFolder level3File);
+		break;
+	case 4:
+		returnvalue = loadLevelFromFile(levelFolder level4File);
+		break;
+	case 0:
+		returnvalue = loadLevelFromFile(levelFolder levelGenericFile);
+		break;
+	default:
+		returnvalue = false;
+	}
+	return returnvalue;
+}
+
+bool saveLevel(int lvl){
+	bool returnvalue = true;
+	switch(lvl){
+	case 1:
+		returnvalue = writeLevelToFile(levelFolder level1File);
+		break;
+	case 2:
+		returnvalue = writeLevelToFile(levelFolder level2File);
+		break;
+	case 3:
+		returnvalue = writeLevelToFile(levelFolder level3File);
+		break;
+	case 4:
+		returnvalue = writeLevelToFile(levelFolder level4File);
+		break;
+	case 0:
+		returnvalue = writeLevelToFile(levelFolder levelGenericFile);
+		break;
+	default:
+		returnvalue = false;
+	}
+	return returnvalue;
 }

@@ -45,7 +45,8 @@ bool loadLevelMaker(){
 
 void levelMakerUpdateLogic(){
     SDL_PumpEvents();
-
+	bool ctrlDown = false;
+	bool sDown = false;
     while( SDL_PollEvent(&e) ){
         if( e.type == SDL_QUIT ){
             quit = true;
@@ -58,6 +59,43 @@ void levelMakerUpdateLogic(){
                 quitLevelMaker = true;
                 continue;
             }
+
+            else if( KeyBoardState[SDL_SCANCODE_LCTRL] && KeyBoardState[SDL_SCANCODE_S] ){
+				if( e.key.keysym.sym == SDLK_0 ){
+                    saveLevel(0);
+				}
+				else if( e.key.keysym.sym == SDLK_1 ){
+					saveLevel(1);
+				}
+				else if( e.key.keysym.sym == SDLK_2 ){
+					saveLevel(2);
+				}
+				else if( e.key.keysym.sym == SDLK_3 ){
+					saveLevel(3);
+				}
+				else if( e.key.keysym.sym == SDLK_4 ){
+					saveLevel(4);
+				}
+
+            }
+            else if( KeyBoardState[SDL_SCANCODE_LCTRL] && KeyBoardState[SDL_SCANCODE_O] ){
+				if( e.key.keysym.sym == SDLK_0 ){
+					loadLevel(0);
+				}
+				else if( e.key.keysym.sym == SDLK_1 ){
+					loadLevel(1);
+				}
+				else if( e.key.keysym.sym == SDLK_2 ){
+					loadLevel(2);
+				}
+				else if( e.key.keysym.sym == SDLK_3 ){
+					loadLevel(3);
+				}
+				else if( e.key.keysym.sym == SDLK_4 ){
+					loadLevel(4);
+				}
+            }
+
         }
         else if(e.button.button == SDL_BUTTON_LEFT || e.button.button == SDL_BUTTON_RIGHT){
             if(e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONUP){

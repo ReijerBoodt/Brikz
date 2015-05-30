@@ -144,7 +144,6 @@ void movePaddle(bool right){
 void startNewRound(){
 
 	speedAmplifier = 0.20;
-	int randInt = rand();
 	float randFloat = (float)rand()/(float)(RAND_MAX/10) + 11;
 	//ball.XSpeed = (rand()%20 + 1);
 	//ball.YSpeed = BALL_INITIAL_SPEED_Y*speedAmplifier;
@@ -287,7 +286,7 @@ void updateBrickLogic(){
 			if(bricks[i].damage == 0){
 				bricksLeft--;
 			}
-			speedAmplifier += 0.01;
+			speedAmplifier += 0.001;
 
             ball.x += ball.XSpeed*speedAmplifier;
             ball.y += ball.YSpeed*speedAmplifier;
@@ -349,7 +348,7 @@ void doRendering(){
 				, BreakoutBall2RectDest.w/2, 0, 0, 0, 255);
 	}
 	//SDL_RenderCopy(renderer, breakout_texture, &BreakoutPaddleRectSauce, &paddleDest);
-	SDL_Point screenCenter = {SCREEN_WIDTH*1.3/4, SCREEN_HEIGHT*1.3/4};
+	//SDL_Point screenCenter = {SCREEN_WIDTH*1.3/4, SCREEN_HEIGHT*1.3/4};
 
 	SDL_RenderCopyEx(renderer, breakout_texture, &BreakoutPaddleRectSauce, &paddleDest, paddleRotation, NULL, SDL_FLIP_NONE);
 

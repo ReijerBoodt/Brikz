@@ -1,4 +1,4 @@
-#define BRIKZ_IMAGE "BrikzSprites.png"
+#define BRIKZ_IMAGE "res/BrikzSprites.png"
 #define PADDLE_STEP 10
 #define BALL_INITIAL_SPEED_X 20
 #define BALL_INITIAL_SPEED_Y 10
@@ -7,7 +7,7 @@
 #define BRICK_HEIGHT 20
 #define BALL_WIDTH 20
 #define BALL_HEIGHT 20
-#define DEBUG_FONT "Monaco.ttf"
+#define DEBUG_FONT "res/fonts/SourceSansPro-Regular.otf"
 
 typedef struct{
 	float x;

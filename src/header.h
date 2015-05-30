@@ -8,10 +8,12 @@
 #include <stdbool.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 
-#define MENU_IMAGE "BrikzMenu.png"
+#define MENU_IMAGE "res/BrikzMenu.png"
+#define SCREEN_WIDTH 1920/1.5
+#define SCREEN_HEIGHT 1080/1.5
 
-const int SCREEN_WIDTH;
-const int SCREEN_HEIGHT;
+//const int SCREEN_WIDTH;
+//const int SCREEN_HEIGHT;
 SDL_Window* gWindow;
 SDL_Surface* gScreenSurface;
 SDL_Renderer* renderer;
@@ -21,7 +23,8 @@ SDL_Texture* menu_texture;
 
 
 int OpenMainMenu();
-int StartPongGame();
+int startBreakoutGame();
+int startLevelMaker();
 
 bool quit;
 
@@ -29,6 +32,10 @@ bool isPointInsideRect(SDL_Point, SDL_Rect);
 bool init();
 bool loadMedia();
 void close();
+
+bool saveLevel();
+bool loadLevel();
+
 SDL_Event e;
 
 SDL_Rect bmprect;

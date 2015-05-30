@@ -45,8 +45,6 @@ bool loadLevelMaker(){
 
 void levelMakerUpdateLogic(){
     SDL_PumpEvents();
-	bool ctrlDown = false;
-	bool sDown = false;
     while( SDL_PollEvent(&e) ){
         if( e.type == SDL_QUIT ){
             quit = true;
@@ -58,6 +56,9 @@ void levelMakerUpdateLogic(){
             if(e.key.keysym.sym == SDLK_ESCAPE){
                 quitLevelMaker = true;
                 continue;
+            }
+            else if(e.key.keysym.sym == SDLK_a){
+                levelMakerAddBrickDialog();
             }
 
             else if( KeyBoardState[SDL_SCANCODE_LCTRL] && KeyBoardState[SDL_SCANCODE_S] ){
@@ -108,14 +109,14 @@ void levelMakerUpdateLogic(){
             for(int i=0;i<bricksInLevel;i++){
                 //printf("checked a brick\n");
                 SDL_Rect temprect = {bricks[i].x, bricks[i].y, BRICK_WIDTH, BRICK_HEIGHT};
-                if(SDL_EnclosePoints(&mousepos, 1, &temprect, NULL) && !previouslyChanged[i] ){
+                if(SDL_EnclosePoints(&mousepos, 1, &temprect, NULL)){
                     if( e.button.button == SDL_BUTTON_LEFT && bricks[i].damage>0 ){
                         bricks[i].damage--;
-                        previouslyChanged[i]=true;
+
                     }
                     if( e.button.button == SDL_BUTTON_RIGHT && bricks[i].damage<2 ){
                         bricks[i].damage++;
-                        previouslyChanged[i]=true;
+
                     }
                 }
             }
@@ -132,9 +133,6 @@ void closeLevelMaker(){
 
 	free(bricks);
 	bricks = NULL;
-
-	free(previouslyChanged);
-	previouslyChanged = NULL;
 
 	TTF_CloseFont(font);
 	font = NULL;
@@ -222,9 +220,6 @@ int startLevelMaker(){
 
 	bool render = true;
 
-	Uint32 previousClear;
-	Uint32 clearBeforeThat;
-
 	SDL_SetWindowTitle(gWindow, "Brikz Levelmaker");
 
 	if( !loadLevelMaker() ){
@@ -232,11 +227,9 @@ int startLevelMaker(){
 		exitStatus = -1;
 	}
 	loadLevelGeneric();
-	previouslyChanged = (bool*) calloc(bricksInLevel, sizeof(bool));
 
 	previousTick = SDL_GetTicks();
 	previousFrame = previousTick;
-	previousClear = previousTick;
 	while(!quitLevelMaker){
 
 		if( SDL_GetTicks()-previousTick < 10 ){
@@ -245,11 +238,7 @@ int startLevelMaker(){
 		if( SDL_GetTicks()-previousFrame < 10 ){
 			render = false;
 		}
-		if( SDL_GetTicks()-previousClear > 200 ){
-            free(previouslyChanged);
-            previouslyChanged = NULL;
-            previouslyChanged = (bool*) calloc(bricksInLevel, sizeof(bool));
-		}
+
 
 		if(update){
 			tickBeforeThat = previousTick;
@@ -292,3 +281,92 @@ int startLevelMaker(){
 	return exitStatus;
 }
 
+void levelMakerAddBrickDialog(){
+
+    TTF_Font* textFont = NULL;
+    SDL_Surface* textSurface = NULL;
+
+    SDL_Texture* titleTexture = NULL;
+    SDL_Texture* labelXTexture = NULL;
+    SDL_Texture* labelYTexture = NULL;
+    SDL_Texture* buttonOKTexture = NULL;
+    SDL_Texture* buttonCancelTexture = NULL;
+
+    SDL_Rect textFieldX = {ADDBRICKDIALOG_X+108, ADDBRICKDIALOG_Y+100, 200, 23 };
+    SDL_Rect textFieldY = {ADDBRICKDIALOG_X+108, ADDBRICKDIALOG_Y+150, 200, 23 };
+
+
+    textFont = TTF_OpenFont(DEBUG_FONT, 20);
+    textSurface = TTF_RenderText_Blended(textFont, "Add Brick", (SDL_Color) {200, 200, 200} );
+    titleTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_Rect titleRect = {ADDBRICKDIALOG_X+ADDBRICKDIALOG_WIDTH/2-textSurface->w/2, ADDBRICKDIALOG_Y+10, textSurface->w,textSurface->h};
+	SDL_FreeSurface(textSurface);
+    textSurface = NULL;
+
+    TTF_CloseFont(textFont);
+    textFont = NULL;
+    textFont = TTF_OpenFont(DEBUG_FONT, 18);
+
+    textSurface = TTF_RenderText_Blended(textFont, "X value:", (SDL_Color) {200, 200, 200} );
+    labelXTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+	SDL_Rect labelXRect = {ADDBRICKDIALOG_X+30, ADDBRICKDIALOG_Y+100, textSurface->w, textSurface->h};
+	printf("{%d, %d}", textSurface->w, textSurface->h);
+    SDL_FreeSurface(textSurface);
+    textSurface = NULL;
+
+    textSurface = TTF_RenderText_Blended(textFont, "Y value:", (SDL_Color) {200, 200, 200} );
+    labelYTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_Rect labelYRect = {ADDBRICKDIALOG_X+30, ADDBRICKDIALOG_Y+150, textSurface->w, textSurface->h};
+    SDL_FreeSurface(textSurface);
+    textSurface = NULL;
+
+
+
+    /*
+    SDL_Rect labelYRect = NULL;
+    SDL_Rect buttonOKRect = NULL;
+    SDL_Rect buttonCancelRect = NULL;*/
+
+    bool stopDialog = false;
+    while(!stopDialog){
+
+        SDL_SetRenderDrawColor(renderer, 180, 100, 100, 255);
+        SDL_RenderFillRect(renderer, &((SDL_Rect){ADDBRICKDIALOG_X, ADDBRICKDIALOG_Y,ADDBRICKDIALOG_WIDTH,ADDBRICKDIALOG_HEIGHT}));
+		SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
+		SDL_RenderCopy(renderer, labelXTexture, NULL, &labelXRect);
+		SDL_RenderCopy(renderer, labelYTexture, NULL, &labelYRect);
+
+		SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+        SDL_RenderFillRect(renderer, &textFieldX);
+        SDL_SetRenderDrawColor(renderer, 180, 100, 100, 255);
+
+        SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+        SDL_RenderFillRect(renderer, &textFieldY);
+        SDL_SetRenderDrawColor(renderer, 180, 100, 100, 255);
+
+
+		SDL_RenderPresent(renderer);
+
+		SDL_PumpEvents();
+		while( SDL_PollEvent(&e) ){
+			if(e.type == SDL_KEYDOWN){
+				printf("key pressed: %s \n", SDL_GetKeyName(e.key.keysym.sym) );
+				if(e.key.keysym.sym == SDLK_ESCAPE){
+					stopDialog = true;
+					continue;
+				}
+			}
+			else if( e.type == SDL_KEYDOWN && e.button.button == SDL_BUTTON_LEFT ){
+                SDL_Point mousepos = {e.button.x, e.button.y};
+                if(SDL_EnclosePoints(&mousepos, 1, &textFieldX, NULL)){
+
+                }
+                else if(SDL_EnclosePoints(&mousepos, 1, &textFieldX, NULL)){
+
+                }
+			}
+		}
+    }
+
+
+}
